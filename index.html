@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RT 002 RW 002 - Dusun Cijeruk</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root{
+    --primary:#00c6ff;
+    --dark:#0f0f0f;
+    --card:#1b1b1b;
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins',sans-serif;
+    scroll-behavior:smooth;
+}
+
+body{
+    background:linear-gradient(135deg,#0f0f0f,#141414,#1a1a1a);
+    color:white;
+}
+
+/* NAVBAR */
+nav{
+    position:fixed;
+    width:100%;
+    padding:15px 5%;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    background:rgba(0,0,0,0.7);
+    backdrop-filter:blur(10px);
+    z-index:1000;
+}
+
+.logo-area{
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.logo-area img{
+    width:45px;
+    height:45px;
+    object-fit:contain;
+    border-radius:50%;
+    background:#111;
+    padding:5px;
+}
+
+nav h2{
+    color:var(--primary);
+    font-size:18px;
+}
+
+nav ul{
+    list-style:none;
+    display:flex;
+    gap:25px;
+}
+
+nav ul li a{
+    text-decoration:none;
+    color:white;
+    font-size:14px;
+    transition:0.3s;
+}
+
+nav ul li a:hover{
+    color:var(--primary);
+}
+
+.menu-toggle{
+    display:none;
+    font-size:26px;
+    cursor:pointer;
+}
+
+/* HERO */
+.hero{
+    min-height:100vh;
+    padding:0 5%;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    text-align:center;
+    background:linear-gradient(rgba(0,0,0,0.7),rgba(0,0,0,0.8)),
+    url('https://images.unsplash.com/photo-1500530855697-b586d89ba3ee') center/cover;
+}
+
+.hero h1{
+    font-size:clamp(28px,5vw,50px);
+}
+
+.hero p{
+    margin-top:15px;
+    font-size:clamp(14px,2vw,18px);
+    color:#ccc;
+}
+
+/* SECTION */
+section{
+    padding:80px 5%;
+}
+
+.section-title{
+    text-align:center;
+    margin-bottom:40px;
+    font-size:clamp(22px,4vw,32px);
+    color:var(--primary);
+}
+
+/* CARDS */
+.cards{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+    gap:25px;
+}
+
+.card{
+    background:var(--card);
+    padding:25px;
+    border-radius:15px;
+    box-shadow:0 0 15px rgba(0,198,255,0.1);
+    transition:0.3s;
+    text-align:center;
+}
+
+.card:hover{
+    transform:translateY(-8px);
+    box-shadow:0 0 25px rgba(0,198,255,0.3);
+}
+
+.card h3{
+    margin:10px 0 5px;
+    color:var(--primary);
+}
+
+/* FOTO PENGURUS AUTO FIT */
+.pengurus-photo{
+    width:100%;
+    height:220px;
+    object-fit:cover;
+    border-radius:12px;
+    margin-bottom:10px;
+}
+
+/* GALERI SLIDER */
+.slider-container{
+    position:relative;
+    width:100%;
+    overflow:hidden;
+    margin:auto;
+}
+
+.slider{
+    display:flex;
+    transition:0.5s ease;
+}
+
+.slider img{
+    min-width:100%;
+    max-height:400px;
+    object-fit:cover;
+    border-radius:15px;
+    cursor:pointer;
+}
+
+/* tombol prev-next */
+.prev, .next{
+    position:absolute;
+    top:50%;
+    transform:translateY(-50%);
+    background:rgba(0,0,0,0.5);
+    border:none;
+    color:white;
+    font-size:30px;
+    padding:5px 15px;
+    cursor:pointer;
+    border-radius:10px;
+    z-index:10;
+}
+
+.prev{ left:10px; }
+.next{ right:10px; }
+
+.prev:hover, .next:hover{
+    background:var(--primary);
+    color:black;
+}
+
+/* BUTTON */
+.btn{
+    display:inline-block;
+    margin-top:15px;
+    padding:10px 20px;
+    background:var(--primary);
+    color:black;
+    border-radius:30px;
+    text-decoration:none;
+    font-weight:600;
+    transition:0.3s;
+}
+
+.btn:hover{
+    background:#00a2d6;
+}
+
+/* LIGHTBOX */
+.lightbox{
+    display:none;
+    position:fixed;
+    z-index:2000;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,0.95);
+    justify-content:center;
+    align-items:center;
+}
+
+.lightbox img{
+    max-width:90%;
+    max-height:90%;
+    border-radius:10px;
+}
+
+/* FOOTER */
+footer{
+    text-align:center;
+    padding:25px;
+    background:black;
+    color:#aaa;
+}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+    nav ul{
+        position:absolute;
+        top:60px;
+        right:0;
+        background:#111;
+        width:200px;
+        flex-direction:column;
+        text-align:center;
+        padding:20px 0;
+        display:none;
+    }
+
+    nav ul.active{
+        display:flex;
+    }
+
+    .menu-toggle{
+        display:block;
+        color:white;
+    }
+
+    .pengurus-photo{
+        height:180px;
+    }
+
+    .slider img{
+        max-height:300px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<nav>
+    <div class="logo-area">
+        <img src="https://www.dropbox.com/scl/fi/qr72ax4pp413vcb5j0umt/file_00000000227471fabb60fb95681fca7c.png?rlkey=873ifnaayybmceio5tpy7hi9b&st=qun9qxd6&raw=1" alt="Logo RT 02">
+        <h2>RT 002 / RW 002</h2>
+    </div>
+
+    <div class="menu-toggle" onclick="toggleMenu()">☰</div>
+    <ul id="menu">
+        <li><a href="#pengurus">Pengurus</a></li>
+        <li><a href="#galeri-kegiatan">Kegiatan</a></li>
+        <li><a href="#galeri-rapat">Rapat</a></li>
+        <li><a href="#info">Informasi</a></li>
+    </ul>
+</nav>
+
+<section class="hero">
+    <div>
+        <h1>RT 002 RW 002</h1>
+        <p>Dusun Cijeruk - Desa Cijeruk<br>
+        Kecamatan Dayeuhluhur<br>
+        Kabupaten Cilacap - Jawa Tengah 53266</p>
+    </div>
+</section>
+
+<!-- PENGURUS -->
+<section id="pengurus">
+    <h2 class="section-title">Struktur Pengurus</h2>
+    <div class="cards">
+        <div class="card">
+            <img src="https://www.dropbox.com/scl/fi/qr72ax4pp413vcb5j0umt/file_00000000227471fabb60fb95681fca7c.png?rlkey=873ifnaayybmceio5tpy7hi9b&st=qun9qxd6&raw=1" class="pengurus-photo" onclick="openLightbox(this)">
+            <h3>Ketua RT</h3>
+            <p>Pak Tian Murdi</p>
+        </div>
+        <div class="card">
+            <img src="https://www.dropbox.com/scl/fi/qr72ax4pp413vcb5j0umt/file_00000000227471fabb60fb95681fca7c.png?rlkey=873ifnaayybmceio5tpy7hi9b&st=qun9qxd6&raw=1" class="pengurus-photo" onclick="openLightbox(this)">
+            <h3>Sekretaris</h3>
+            <p>Pak Darwa</p>
+        </div>
+        <div class="card">
+            <img src="https://www.dropbox.com/scl/fi/qr72ax4pp413vcb5j0umt/file_00000000227471fabb60fb95681fca7c.png?rlkey=873ifnaayybmceio5tpy7hi9b&st=qun9qxd6&raw=1" class="pengurus-photo" onclick="openLightbox(this)">
+            <h3>Bendahara</h3>
+            <p>Pak Darwa</p>
+        </div>
+    </div>
+</section>
+
+<!-- GALERI KEGIATAN -->
+<section id="galeri-kegiatan">
+    <h2 class="section-title">Galeri Kegiatan</h2>
+    <div class="slider-container">
+        <button class="prev" onclick="slideKegiatan(-1)">❮</button>
+        <div class="slider" id="sliderKegiatan">
+            <img src="https://www.dropbox.com/scl/fi/7de7ktpgazobxt3280hit/IMG20200619080130.jpg?rlkey=gjp2qg0hc60g5m77q4bd4jlsr&st=zfh3io0c&raw=1" onclick="openLightbox(this)">
+            <img src="https://www.dropbox.com/scl/fi/viqr4uw4n7j1qk6e6093d/IMG20200619080135.jpg?rlkey=afqnb33b07q06q3qjiacv0glk&st=612s481n&raw=1" onclick="openLightbox(this)">
+            <img src="https://www.dropbox.com/scl/fi/ytivzb3kohjqospsg6sjt/IMG20200619080323.jpg?rlkey=n4d1ibkani5vazij5y6aq4sob&st=to62ze64&raw=1" onclick="openLightbox(this)">
+            <img src="https://www.dropbox.com/scl/fi/203sg6v3x1qptfkcz6br4/IMG20200619111545.jpg?rlkey=6qyof526eap399q8netico5jn&st=77ibis8j&raw=1" onclick="openLightbox(this)">
+            <img src="https://www.dropbox.com/scl/fi/3mbwushpuy0rxun3gmaxa/IMG20200619111633.jpg?rlkey=va5y0vm58gjj24l1y6chvofxt&st=xmwubx8q&raw=1" onclick="openLightbox(this)">
+			<img src="https://www.dropbox.com/scl/fi/qg9raj4a01bfprp1ikter/IMG20200705075905.jpg?rlkey=s6l91qosvd0vs3s47vjsm0g4q&st=y0k232sz&raw=1" onclick="openLightbox(this)">
+            <img src="https://www.dropbox.com/scl/fi/zhcijqwrq7naxj82p9lty/IMG20200705075909.jpg?rlkey=xgj6y0nwzmn9wek376z81vatz&st=mtraystl&raw=1" onclick="openLightbox(this)">
+			<img src="https://www.dropbox.com/scl/fi/1e3vmp7llhq72rk12e3t7/IMG20200619111555.jpg?rlkey=ysq7t0i1faengal782t94co80&st=pgoob0q2&raw=1" onclick="openLightbox(this)">
+			<img src="https://www.dropbox.com/scl/fi/1agj7izkjln0m6y4pmigf/IMG20210121190409.jpg?rlkey=l8av1y7pkzkstbi0le8nfl25b&st=9cd7dnxf&raw=1" onclick="openLightbox(this)">
+			<img src="https://www.dropbox.com/scl/fi/8fe3524pmb4s5by0e6czj/IMG20210217085914.jpg?rlkey=yc4arbnwogoq3ixg13k8ox6ib&st=x1g0l84n&raw=1" onclick="openLightbox(this)">
+        </div>
+        <button class="next" onclick="slideKegiatan(1)">❯</button>
+    </div>
+</section>
+
+<!-- GALERI RAPAT -->
+<section id="galeri-rapat">
+    <h2 class="section-title">Galeri Rapat</h2>
+    <div class="slider-container">
+        <button class="prev" onclick="slideRapat(-1)">❮</button>
+        <div class="slider" id="sliderRapat">
+            <img src="https://www.dropbox.com/scl/fi/qr72ax4pp413vcb5j0umt/file_00000000227471fabb60fb95681fca7c.png?rlkey=873ifnaayybmceio5tpy7hi9b&st=qun9qxd6&raw=1" onclick="openLightbox(this)">
+            <img src="https://www.dropbox.com/scl/fi/qr72ax4pp413vcb5j0umt/file_00000000227471fabb60fb95681fca7c.png?rlkey=873ifnaayybmceio5tpy7hi9b&st=qun9qxd6&raw=1" onclick="openLightbox(this)">
+        </div>
+        <button class="next" onclick="slideRapat(1)">❯</button>
+    </div>
+</section>
+
+<section id="info">
+    <h2 class="section-title">Informasi & Rapat</h2>
+    <div class="cards">
+        <div class="card">
+            <h3>Koordinasi Rapat</h3>
+            <p>Informasi rapat melalui Grup WhatsApp.</p>
+            <a href="https://chat.whatsapp.com/BXoY0uWsHPBFmVd7D4KuJ2?mode=gi_t" target="_blank" class="btn">
+                Gabung Grup WhatsApp
+            </a>
+        </div>
+    </div>
+</section>
+
+<footer>
+© 2026 RT 002 RW 002 Dusun Cijeruk
+</footer>
+
+<div id="lightbox" class="lightbox" onclick="closeLightbox()">
+    <img id="lightbox-img" src="">
+</div>
+
+<script>
+function toggleMenu(){
+    document.getElementById("menu").classList.toggle("active");
+}
+
+function openLightbox(img){
+    document.getElementById("lightbox").style.display="flex";
+    document.getElementById("lightbox-img").src=img.src;
+}
+
+function closeLightbox(){
+    document.getElementById("lightbox").style.display="none";
+}
+
+/* SLIDER KEGIATAN */
+let indexKegiatan = 0;
+function slideKegiatan(direction){
+    const slider = document.getElementById("sliderKegiatan");
+    const slides = slider.children.length;
+    indexKegiatan += direction;
+    if(indexKegiatan < 0) indexKegiatan = slides - 1;
+    if(indexKegiatan >= slides) indexKegiatan = 0;
+    slider.style.transform = `translateX(-${indexKegiatan * 100}%)`;
+}
+
+/* SLIDER RAPAT */
+let indexRapat = 0;
+function slideRapat(direction){
+    const slider = document.getElementById("sliderRapat");
+    const slides = slider.children.length;
+    indexRapat += direction;
+    if(indexRapat < 0) indexRapat = slides - 1;
+    if(indexRapat >= slides) indexRapat = 0;
+    slider.style.transform = `translateX(-${indexRapat * 100}%)`;
+}
+</script>
+
+</body>
+</html>
