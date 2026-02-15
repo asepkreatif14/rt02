@@ -578,20 +578,26 @@ form.addEventListener("submit", e => {
     statusMsg.innerText = "Mengirim komentar...";
 
     fetch(scriptURL, {
-        method: "POST",
-		mode: "no-cors",
-        body: new FormData(form)
-    })
-    .then(response => {
+    method: "POST",
+    mode: "cors",
+    body: new FormData(form)
+})
+.then(res => res.json())
+.then(data => {
+    if (data.result === "success") {
         statusMsg.style.color = "#1cc88a";
         statusMsg.innerText = "✅ Komentar berhasil dikirim!";
         form.reset();
-    })
-    .catch(error => {
+    } else {
         statusMsg.style.color = "red";
-        statusMsg.innerText = "❌ Gagal mengirim. Coba lagi.";
-    });
+        statusMsg.innerText = "❌ Error: " + data.message;
+    }
+})
+.catch(error => {
+    statusMsg.style.color = "red";
+    statusMsg.innerText = "❌ Gagal koneksi ke server";
 });
+
 </script>
 
 </body>
