@@ -272,6 +272,65 @@ footer{
         max-height:300px;
     }
 }
+	/* FORM KOMENTAR */
+.form-section{
+    padding:80px 5%;
+    background:linear-gradient(135deg,#111,#1a1a1a);
+}
+
+.form-container{
+    max-width:600px;
+    margin:auto;
+    background:var(--card);
+    padding:35px;
+    border-radius:20px;
+    box-shadow:0 0 25px rgba(0,198,255,0.15);
+    transition:0.3s;
+}
+
+.form-container:hover{
+    box-shadow:0 0 35px rgba(0,198,255,0.3);
+}
+
+.form-group{
+    margin-bottom:18px;
+}
+
+.form-group input,
+.form-group textarea{
+    width:100%;
+    padding:12px;
+    border-radius:10px;
+    border:1px solid #333;
+    background:#111;
+    color:white;
+    font-size:14px;
+    transition:0.3s;
+}
+
+.form-group input:focus,
+.form-group textarea:focus{
+    border-color:var(--primary);
+    outline:none;
+    box-shadow:0 0 10px rgba(0,198,255,0.3);
+}
+
+.form-container button{
+    width:100%;
+    padding:12px;
+    border:none;
+    border-radius:30px;
+    background:var(--primary);
+    color:black;
+    font-weight:600;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+.form-container button:hover{
+    background:#00a2d6;
+}
+
 </style>
 </head>
 
@@ -370,6 +429,29 @@ footer{
     </div>
 </section>
 
+	<section id="komentar" class="form-section">
+    <h2 class="section-title">Kirim Komentar</h2>
+
+    <div class="form-container">
+        <form action="https://script.google.com/macros/s/AKfycby6L85SEcvyL4jgUcaTV85-FMsOBqIXIdgEB4aeQoVQTVK_TbRX9BFj43hC5x7NrawKSg/exec" method="POST">
+            
+            <div class="form-group">
+                <input type="text" name="name" placeholder="Nama Lengkap" required>
+            </div>
+
+            <div class="form-group">
+                <input type="email" name="email" placeholder="Email Aktif" required>
+            </div>
+
+            <div class="form-group">
+                <textarea name="komentar" rows="4" placeholder="Tulis komentar atau saran..." required></textarea>
+            </div>
+
+            <button type="submit">Kirim Komentar</button>
+
+        </form>
+    </div>
+</section>
 <footer>
 © 2026 RT 002 RW 002 Dusun Cijeruk
 </footer>
