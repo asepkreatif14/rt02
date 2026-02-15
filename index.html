@@ -564,7 +564,7 @@ function slideRapat(direction){
    FORM KOMENTAR FIX
 ======================= */
 
-const scriptURL = "https://script.google.com/macros/s/AKfycby6L85SEcvyL4jgUcaTV85-FMsOBqIXIdgEB4aeQoVQTVK_TbRX9BFj43hC5x7NrawKSg/exec";
+const scriptURL = "https://script.google.com/macros/s/AKfycbz9ap_XAphrv_SEIZBQ0UZkzoRSEDrQsoe1eMkmkbJaEmYiIZfAK9omO3G4fP1_IqfK4A/exec";
 
 const form = document.querySelector("#komentar form");
 const statusMsg = document.createElement("p");
@@ -579,6 +579,7 @@ form.addEventListener("submit", e => {
 
     fetch(scriptURL, {
         method: "POST",
+		mode: "no-cors",
         body: new FormData(form)
     })
     .then(response => {
