@@ -162,7 +162,8 @@ section{
 
 .slider{
     display:flex;
-    transition:0.5s ease;
+    transition: transform 0.6s cubic-bezier(0.65,0,0.35,1);
+    will-change: transform;
 }
 
 .slider img{
@@ -171,6 +172,8 @@ section{
     object-fit:cover;
     border-radius:15px;
     cursor:pointer;
+    user-select:none;
+    -webkit-user-drag:none;
 }
 
 /* tombol prev-next */
@@ -459,7 +462,7 @@ footer{
     <h2 class="section-title">Kirim Komentar</h2>
 
     <div class="form-container">
-        <form action="https://script.google.com/macros/s/AKfycby6L85SEcvyL4jgUcaTV85-FMsOBqIXIdgEB4aeQoVQTVK_TbRX9BFj43hC5x7NrawKSg/exec" method="POST">
+        <form>
             
             <div class="form-group">
                 <input type="text" name="name" placeholder="Nama Lengkap" required>
@@ -500,35 +503,76 @@ function closeLightbox(){
     document.getElementById("lightbox").style.display="none";
 }
 
-/* SLIDER KEGIATAN */
-let indexKegiatan = 0;
-function slideKegiatan(direction){
-    const slider = document.getElementById("sliderKegiatan");
+/* =======================
+   SLIDER MODERN SMOOTH
+======================= */
+
+function createSlider(sliderId){
+    const slider = document.getElementById(sliderId);
     const slides = slider.children.length;
-    indexKegiatan += direction;
-    if(indexKegiatan < 0) indexKegiatan = slides - 1;
-    if(indexKegiatan >= slides) indexKegiatan = 0;
-    slider.style.transform = `translateX(-${indexKegiatan * 100}%)`;
+    let index = 0;
+    let isAnimating = false;
+    let startX = 0;
+    let endX = 0;
+
+    function updateSlide(){
+        if(isAnimating) return;
+        isAnimating = true;
+        slider.style.transform = `translateX(-${index * 100}%)`;
+        setTimeout(()=> isAnimating = false, 600);
+    }
+
+    return {
+        next(){
+            index = (index + 1) % slides;
+            updateSlide();
+        },
+        prev(){
+            index = (index - 1 + slides) % slides;
+            updateSlide();
+        },
+        initSwipe(){
+            slider.addEventListener("touchstart", e=>{
+                startX = e.touches[0].clientX;
+            });
+
+            slider.addEventListener("touchend", e=>{
+                endX = e.changedTouches[0].clientX;
+                if(startX - endX > 50) this.next();
+                if(endX - startX > 50) this.prev();
+            });
+        }
+    }
 }
 
-/* SLIDER RAPAT */
-let indexRapat = 0;
-function slideRapat(direction){
-    const slider = document.getElementById("sliderRapat");
-    const slides = slider.children.length;
-    indexRapat += direction;
-    if(indexRapat < 0) indexRapat = slides - 1;
-    if(indexRapat >= slides) indexRapat = 0;
-    slider.style.transform = `translateX(-${indexRapat * 100}%)`;
+/* Inisialisasi */
+const kegiatanSlider = createSlider("sliderKegiatan");
+const rapatSlider = createSlider("sliderRapat");
+
+kegiatanSlider.initSwipe();
+rapatSlider.initSwipe();
+
+function slideKegiatan(direction){
+    direction === 1 ? kegiatanSlider.next() : kegiatanSlider.prev();
 }
-	<script>
+
+function slideRapat(direction){
+    direction === 1 ? rapatSlider.next() : rapatSlider.prev();
+}
+
+/* =======================
+   FORM KOMENTAR FIX
+======================= */
+
 const scriptURL = "https://script.google.com/macros/s/AKfycby6L85SEcvyL4jgUcaTV85-FMsOBqIXIdgEB4aeQoVQTVK_TbRX9BFj43hC5x7NrawKSg/exec";
 
-const form = document.getElementById("komentar");
-const statusMsg = document.getElementById("komentar");
+const form = document.querySelector("#komentar form");
+const statusMsg = document.createElement("p");
+statusMsg.style.marginTop = "10px";
+form.appendChild(statusMsg);
 
 form.addEventListener("submit", e => {
-    e.preventDefault(); // Mencegah reload
+    e.preventDefault();
 
     statusMsg.style.color = "#00c6ff";
     statusMsg.innerText = "Mengirim komentar...";
@@ -547,8 +591,6 @@ form.addEventListener("submit", e => {
         statusMsg.innerText = "❌ Gagal mengirim. Coba lagi.";
     });
 });
-</script>
-
 </script>
 
 </body>
