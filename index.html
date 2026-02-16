@@ -393,11 +393,10 @@ footer{
     <div class="cards">
         <div class="card">
             <h3>Visi</h3>
-            <p>
-                Mewujudkan lingkungan RT 002 RW 002 yang aman, 
+			<ul style="text-align:left; margin-top:10px; line-height:1.8;">
+                <li>Mewujudkan lingkungan RT 002 RW 002 yang aman, 
                 rukun, tertib, dan sejahtera melalui kebersamaan 
-                serta gotong royong warga.
-            </p>
+                serta gotong royong warga.</li>
         </div>
 
         <div class="card">
@@ -458,23 +457,31 @@ footer{
     </div>
 </section>
 
-<form action="https://script.google.com/macros/s/AKfycbxGSFnCwvYxVBgz9YbAeP8ZtfZ5bal0cYFryigbS_lZIwR9RtW24WJABx8mvqwBXfe9/exec" method="POST">
+<!-- KOMENTAR -->
+<section id="komentar" class="form-section">
+    <h2 class="section-title">Kirim Komentar & Saran</h2>
 
-    <div class="form-group">
-        <input type="text" name="name" placeholder="Nama Lengkap" required>
+    <div class="form-container">
+        <form action="https://script.google.com/macros/s/AKfycbxGSFnCwvYxVBgz9YbAeP8ZtfZ5bal0cYFryigbS_lZIwR9RtW24WJABx8mvqwBXfe9/exec" method="POST">
+            
+            <div class="form-group">
+                <input type="text" name="name" placeholder="Nama Lengkap" required>
+            </div>
+
+            <div class="form-group">
+                <input type="email" name="email" placeholder="Email Aktif" required>
+            </div>
+
+            <div class="form-group">
+                <textarea name="komentar" rows="4" placeholder="Tulis komentar atau saran..." required></textarea>
+            </div>
+
+            <button type="submit">Kirim Komentar</button>
+
+        </form>
     </div>
+</section>
 
-    <div class="form-group">
-        <input type="email" name="email" placeholder="Email Aktif" required>
-    </div>
-
-    <div class="form-group">
-        <textarea name="komentar" rows="4" placeholder="Tulis komentar atau saran..." required></textarea>
-    </div>
-
-    <button type="submit">Kirim Komentar</button>
-
-</form>
 
 <footer>
 © 2026 RT 002 RW 002 Dusun Cijeruk
