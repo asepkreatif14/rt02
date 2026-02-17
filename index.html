@@ -533,7 +533,125 @@ function slideRapat(direction){
     slider.style.transform = `translateX(-${indexRapat * 100}%)`;
 }
 </script>
+<script>
+(function () {
 
+  // ==========================
+  // 1️⃣ SET PERIODE RAMADHAN
+  // ==========================
+  const startDate = new Date(2026, 1, 18); // 18 Feb 2026
+  const endDate   = new Date(2026, 2, 18); // 18 Mar 2026
+
+  const today = new Date();
+  if (today < startDate || today > endDate) return;
+
+  // ==========================
+  // 2️⃣ STYLE
+  // ==========================
+  const style = document.createElement("style");
+  style.innerHTML = `
+    .ramadhan-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.65);
+      backdrop-filter: blur(6px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+
+    .ramadhan-overlay.active {
+      opacity: 1;
+    }
+
+    .ramadhan-popup {
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      color: white;
+      padding: 35px 30px;
+      border-radius: 15px;
+      text-align: center;
+      max-width: 420px;
+      width: 90%;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+      transform: scale(0.8);
+      transition: transform 0.4s ease;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    .ramadhan-overlay.active .ramadhan-popup {
+      transform: scale(1);
+    }
+
+    .ramadhan-popup h2 {
+      margin-bottom: 15px;
+      font-size: 22px;
+    }
+
+    .ramadhan-popup p {
+      font-size: 15px;
+      line-height: 1.6;
+      opacity: 0.9;
+    }
+
+    .ramadhan-btn {
+      margin-top: 20px;
+      padding: 10px 22px;
+      border: none;
+      background: #f6c90e;
+      color: #000;
+      font-weight: bold;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .ramadhan-btn:hover {
+      background: #ffe25c;
+      transform: translateY(-2px);
+    }
+  `;
+  document.head.appendChild(style);
+
+  // ==========================
+  // 3️⃣ POPUP
+  // ==========================
+  const overlay = document.createElement("div");
+  overlay.className = "ramadhan-overlay";
+
+  overlay.innerHTML = `
+    <div class="ramadhan-popup">
+      <h2>🌙 Selamat Menunaikan Ibadah Puasa</h2>
+      <p>
+        Marhaban ya Ramadhan. Semoga setiap amal ibadah kita
+        diterima dan membawa keberkahan bagi kita semua.
+      </p>
+      <button class="ramadhan-btn">Aamiin 🤲</button>
+    </div>
+  `;
+
+  document.body.appendChild(overlay);
+
+  // Tampilkan animasi
+  setTimeout(() => {
+    overlay.classList.add("active");
+  }, 100);
+
+  // Tutup popup
+  function closePopup() {
+    overlay.classList.remove("active");
+    setTimeout(() => overlay.remove(), 400);
+  }
+
+  overlay.querySelector(".ramadhan-btn").addEventListener("click", closePopup);
+  overlay.addEventListener("click", (e) => {
+    if (e.target === overlay) closePopup();
+  });
+
+})();
+</script>
 
 </body>
 </html>
