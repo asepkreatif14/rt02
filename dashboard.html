@@ -196,6 +196,16 @@ window.simpan = async function() {
 
   alert("Data berhasil disimpan!");
 }
+
+window.logout = function() {
+  signOut(auth)
+    .then(() => {
+      window.location.href = "login.html";
+    })
+    .catch((error) => {
+      alert("Gagal logout: " + error.message);
+    });
+}
 </script>
 
 </body>
