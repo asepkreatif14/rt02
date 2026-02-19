@@ -333,6 +333,54 @@ footer{
 .form-container button:hover{
     background:#00a2d6;
 }
+/* JADWAL SHOLAT */
+.jadwal-wrapper{
+    background:var(--card);
+    padding:40px;
+    border-radius:20px;
+    box-shadow:0 0 25px rgba(0,198,255,0.15);
+}
+
+.jadwal-grid{
+    display:flex;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:20px;
+}
+
+.waktu-box{
+    flex:1;
+    min-width:150px;
+    background:#111;
+    padding:20px;
+    border-radius:15px;
+    text-align:center;
+    transition:0.3s;
+    border:1px solid #222;
+}
+
+.waktu-box:hover{
+    transform:translateY(-8px);
+    box-shadow:0 0 20px rgba(0,198,255,0.3);
+    border-color:var(--primary);
+}
+
+.nama-sholat{
+    font-size:14px;
+    color:#aaa;
+    margin-bottom:8px;
+}
+
+.jam-sholat{
+    font-size:22px;
+    font-weight:600;
+    color:var(--primary);
+}
+
+.highlight{
+    border:2px solid var(--primary);
+    box-shadow:0 0 25px rgba(0,198,255,0.6);
+}
 
 </style>
 </head>
@@ -353,7 +401,7 @@ footer{
         <li><a href="#galeri-rapat">Rapat</a></li>
         <li><a href="#info">Informasi</a></li>
 		<li><a href="#komentar">Komentar</a></li>
-
+		<li><a href="#jadwal-sholat">Jadwal Sholat</a></li>
     </ul>
 </nav>
 
@@ -481,7 +529,14 @@ footer{
         </form>
     </div>
 </section>
+	
+<section id="jadwal-sholat">
+    <h2 class="section-title">Jadwal Sholat Hari Ini</h2>
 
+    <div class="jadwal-wrapper">
+        <div id="jadwal" class="jadwal-grid"></div>
+    </div>
+</section>
 
 <footer>
 © 2026 RT 002 RW 002 Dusun Cijeruk
@@ -651,6 +706,50 @@ function slideRapat(direction){
   });
 
 })();
+</script>
+<script>
+const lat = "-7.2338";
+const lon = "108.6051";
+
+fetch(`https://api.aladhan.com/v1/timings?latitude=${lat}&longitude=${lon}&method=11`)
+  .then(response => response.json())
+  .then(data => {
+    const t = data.data.timings;
+    const now = new Date();
+    const currentMinutes = now.getHours() * 60 + now.getMinutes();
+
+    const prayerTimes = {
+      "Subuh": t.Fajr,
+      "Dzuhur": t.Dhuhr,
+      "Ashar": t.Asr,
+      "Maghrib": t.Maghrib,
+      "Isya": t.Isha
+    };
+
+    let html = "";
+
+    for (const [nama, waktu] of Object.entries(prayerTimes)) {
+      const [jam, menit] = waktu.split(":");
+      const totalMinutes = parseInt(jam) * 60 + parseInt(menit);
+
+      let highlight = "";
+      if (Math.abs(currentMinutes - totalMinutes) <= 10) {
+        highlight = "highlight";
+      }
+
+      html += `
+        <div class="waktu-box ${highlight}">
+          <div class="nama-sholat">${nama}</div>
+          <div class="jam-sholat">${waktu}</div>
+        </div>
+      `;
+    }
+
+    document.getElementById("jadwal").innerHTML = html;
+  })
+  .catch(error => {
+    document.getElementById("jadwal").innerHTML = "Gagal mengambil jadwal.";
+  });
 </script>
 
 </body>
