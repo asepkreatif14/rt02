@@ -120,11 +120,23 @@ button.save-btn:hover {
     <p id="userEmail" class="info-box"></p>
   </div>
 
-  <div class="card">
-    <h3>✏️ Edit Profil</h3>
-    <input type="text" id="nama" placeholder="Masukkan Nama Lengkap">
-    <button class="save-btn" onclick="simpan()">Simpan Perubahan</button>
-  </div>
+<div class="card">
+  <h3>✏️ Edit Profil</h3>
+
+  <input type="text" id="nama" placeholder="Nama Lengkap" required>
+  <input type="text" id="nohp" placeholder="Nomor HP" required>
+
+  <select id="jabatan" style="width:100%; padding:12px; margin-top:10px; border-radius:8px;">
+    <option value="">-- Pilih Jabatan di RT 02 --</option>
+    <option value="Ketua RT">Ketua RT</option>
+    <option value="Sekretaris RT">Sekretaris RT</option>
+    <option value="Bendahara">Bendahara</option>
+    <option value="Warga">Warga</option>
+    <option value="Lainnya">Lainnya</option>
+  </select>
+
+  <button class="save-btn" onclick="simpan()">Simpan Perubahan</button>
+</div>
 
 </div>
 
@@ -164,20 +176,25 @@ onAuthStateChanged(auth, (user) => {
 
 window.simpan = async function() {
   const user = auth.currentUser;
+
   const nama = document.getElementById("nama").value;
+  const nohp = document.getElementById("nohp").value;
+  const jabatan = document.getElementById("jabatan").value;
+
+  if (!nama || !nohp || !jabatan) {
+    alert("Semua data wajib diisi!");
+    return;
+  }
 
   await setDoc(doc(db, "users", user.uid), {
     nama: nama,
-    email: user.email
+    nohp: nohp,
+    jabatan: jabatan,
+    email: user.email,
+    role: "warga"
   });
 
   alert("Data berhasil disimpan!");
-}
-
-window.logout = function() {
-  signOut(auth).then(() => {
-    window.location.href = "login.html";
-  });
 }
 </script>
 
