@@ -1,22 +1,104 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
-  <title>Login RT 002</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login Warga RT 002</title>
+
+<style>
+body {
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.login-card {
+  background: white;
+  padding: 40px;
+  border-radius: 15px;
+  width: 350px;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+  text-align: center;
+  animation: fadeIn 0.8s ease-in-out;
+}
+
+.login-card h2 {
+  margin-bottom: 10px;
+  color: #2c5364;
+}
+
+.login-card p {
+  font-size: 14px;
+  color: #777;
+  margin-bottom: 25px;
+}
+
+input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 15px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  outline: none;
+  transition: 0.3s;
+}
+
+input:focus {
+  border-color: #2c5364;
+  box-shadow: 0 0 5px rgba(44,83,100,0.4);
+}
+
+button {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  background: #2c5364;
+  color: white;
+  font-size: 15px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+button:hover {
+  background: #1b3b4b;
+}
+
+.register-btn {
+  background: #777;
+  margin-top: 10px;
+}
+
+.register-btn:hover {
+  background: #555;
+}
+
+@keyframes fadeIn {
+  from {opacity: 0; transform: translateY(20px);}
+  to {opacity: 1; transform: translateY(0);}
+}
+</style>
 </head>
+
 <body>
 
-<h2>Login Warga</h2>
+<div class="login-card">
+  <h2>Login Warga</h2>
+  <p>RT 002 RW 002 Dusun Cijeruk Kec. Dayuehluhur</p>
+  <p>Kab. Cilacap Prov. Jawa Tengah 53266</p>
 
-<input type="email" id="email" placeholder="Email">
-<br><br>
-<input type="password" id="password" placeholder="Password">
-<br><br>
+  <input type="email" id="email" placeholder="Masukkan Email">
+  <input type="password" id="password" placeholder="Masukkan Password">
 
-<button onclick="register()">Daftar</button>
-<button onclick="login()">Login</button>
+  <button onclick="login()">Login</button>
+  <button class="register-btn" onclick="register()">Daftar Akun</button>
+</div>
 
 <script type="module">
-
 import { initializeApp } from 
 "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } 
@@ -36,9 +118,7 @@ window.register = function() {
   const password = document.getElementById("password").value;
 
   createUserWithEmailAndPassword(auth, email, password)
-    .then(() => {
-      alert("Berhasil daftar!");
-    })
+    .then(() => alert("Akun berhasil dibuat!"))
     .catch(error => alert(error.message));
 }
 
@@ -47,12 +127,9 @@ window.login = function() {
   const password = document.getElementById("password").value;
 
   signInWithEmailAndPassword(auth, email, password)
-    .then(() => {
-      window.location.href = "dashboard.html";
-    })
+    .then(() => window.location.href = "dashboard.html")
     .catch(error => alert(error.message));
 }
-
 </script>
 
 </body>
