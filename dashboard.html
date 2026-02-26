@@ -111,7 +111,26 @@
     <button id="btnSimpan" class="btn save-btn" onclick="simpan()">Simpan Perubahan</button>
   </div>
 </div>
-
+<div class="card" style="grid-column: 1 / -1; margin-top: 20px;">
+  <h3>📋 Riwayat Pembayaran Iuran Warga</h3>
+  <div style="overflow-x: auto;">
+    <table style="width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.9rem;">
+      <thead>
+        <tr style="text-align: left; border-bottom: 2px solid #334155; color: var(--text-dim);">
+          <th style="padding: 12px;">Nama Warga</th>
+          <th style="padding: 12px;">Jabatan</th>
+          <th style="padding: 12px;">Tanggal Bayar</th>
+          <th style="padding: 12px;">Status</th>
+        </tr>
+      </thead>
+      <tbody id="tabelHistori">
+        <tr>
+          <td colspan="4" style="text-align: center; padding: 20px; color: var(--text-dim);">Memuat data warga...</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
 <div class="footer">
   &copy; 2026 RT 002 RW 002 Dusun Cijeruk <br>
   Sistem Informasi Warga Terintegrasi Firebase
@@ -271,7 +290,54 @@
     if(confirm("Keluar dari dashboard?")) {
       signOut(auth).then(() => window.location.href = "login.html");
     }
+    
   };
+  // --- 5. LOAD HISTORI PEMBAYARAN (TRANSPARANSI) ---
+async function loadHistori() {
+  const tbody = document.getElementById("tabelHistori");
+  try {
+    const querySnapshot = await getDocs(collection(db, "users"));
+    let html = "";
+    
+    querySnapshot.forEach((doc) => {
+      const data = doc.data();
+      // Hanya tampilkan yang sudah mengisi nama
+      if (data.nama) {
+        const tgl = data.tglBayar ? new Date(data.tglBayar).toLocaleDateString('id-ID') : "-";
+        const status = data.sudahBayar 
+          ? `<span style="color: var(--success); font-weight: bold;">✅ Lunas</span>` 
+          : `<span style="color: var(--danger);">❌ Belum Bayar</span>`;
+        
+        html += `
+          <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+            <td style="padding: 12px;">${data.nama}</td>
+            <td style="padding: 12px; color: var(--text-dim);">${data.jabatan || "Warga"}</td>
+            <td style="padding: 12px;">${tgl}</td>
+            <td style="padding: 12px;">${status}</td>
+          </tr>
+        `;
+      }
+    });
+    
+    tbody.innerHTML = html || '<tr><td colspan="4" style="text-align: center; padding: 20px;">Belum ada data warga.</td></tr>';
+  } catch (e) {
+    console.error("Gagal histori:", e);
+    tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: var(--danger);">Gagal memuat data.</td></tr>';
+  }
+}
+
+// Update bagian onAuthStateChanged untuk memanggil fungsi ini
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    document.getElementById("userEmail").innerText = user.email;
+    loadUserData(user.uid);
+    updateGlobalStats();
+    loadHistori(); // <--- TAMBAHKAN INI
+  } else {
+    window.location.href = "login.html";
+  }
+});
 </script>
+  
 </body>
 </html>
