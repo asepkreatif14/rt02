@@ -122,6 +122,7 @@
   import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
   import { getFirestore, setDoc, doc, getDoc, collection, getDocs, increment } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
+  // --- CONFIGURASI FIREBASE ---
   const firebaseConfig = {
     apiKey: "AIzaSyA0ZRsLrvZHL0I9biBI5-Ana7vVToaW5Qo",
     authDomain: "data-rt-002-cijeruk.firebaseapp.com",
@@ -136,44 +137,63 @@
   const auth = getAuth(app);
   const db = getFirestore(app);
 
-  // --- 1. UPDATE STATISTIK (SALDO & JUMLAH WARGA) ---
+  // --- 1. UPDATE STATISTIK GLOBAL ---
   async function updateGlobalStats() {
     try {
-      // Hitung Jumlah Warga
+      // Hitung Total Warga Terdaftar
       const snapshot = await getDocs(collection(db, "users"));
       document.getElementById("totalWarga").innerText = snapshot.size + " Orang";
 
-      // Ambil Saldo Kas
+      // Ambil Saldo Kas Pusat
       const kasSnap = await getDoc(doc(db, "finance", "kas"));
       if (kasSnap.exists()) {
         const saldo = kasSnap.data().total || 0;
         document.getElementById("saldoKas").innerText = "Rp " + saldo.toLocaleString('id-ID');
       }
-    } catch (e) { console.error("Stats Error:", e); }
+    } catch (e) { console.error("Gagal memuat statistik:", e); }
   }
 
-  // --- 2. LOAD DATA PROFIL USER ---
+  // --- 2. LOAD DATA USER & CEK HAK AKSES ---
   async function loadUserData(uid) {
     const docRef = doc(db, "users", uid);
     const docSnap = await getDoc(docRef);
     
     if (docSnap.exists()) {
       const data = docSnap.data();
+      
+      // Auto-fill form
       document.getElementById("nama").value = data.nama || "";
       document.getElementById("nohp").value = data.nohp || "";
       document.getElementById("jabatan").value = data.jabatan || "Warga";
       
-      if(data.sudahBayar === true) {
-        const sIuran = document.getElementById("statusIuran");
-        sIuran.innerText = "Sudah Bayar";
-        sIuran.style.color = "var(--success)";
-        document.getElementById("btnPay").innerText = "✅ Iuran Sudah Dibayar";
-        document.getElementById("btnPay").disabled = true;
+      const btnPay = document.getElementById("btnPay");
+      const statusText = document.getElementById("statusIuran");
+
+      // --- LOGIKA PROTEKSI ADMIN ---
+      const isAdmin = (data.jabatan === "Ketua RT" || data.jabatan === "Sekretaris RT");
+
+      if (isAdmin) {
+        // Jika Admin: Tombol Aktif
+        btnPay.disabled = false;
+        btnPay.innerHTML = "💳 Input Kas Iuran (Admin)";
+        btnPay.style.background = "var(--success)";
+      } else {
+        // Jika Warga: Tombol Terkunci
+        btnPay.disabled = true;
+        btnPay.innerHTML = "🔒 Terkunci (Hanya Admin)";
+        btnPay.style.background = "#475569"; // Warna abu-abu kusam
+        btnPay.style.cursor = "not-allowed";
+      }
+
+      // Cek Status Iuran Personal
+      if(data.sudahBayar) {
+        statusText.innerText = "Sudah Terbayar";
+        statusText.style.color = "var(--success)";
       }
     }
   }
 
-  // --- 3. LOGIKA SIMPAN PROFIL ---
+  // --- 3. SIMPAN PROFIL ---
   window.simpan = async function() {
     const user = auth.currentUser;
     const btn = document.getElementById("btnSimpan");
@@ -188,35 +208,55 @@
 
     try {
       await setDoc(doc(db, "users", user.uid), {
-        nama: nama, nohp: nohp, jabatan: jabatan, email: user.email
+        nama: nama,
+        nohp: nohp,
+        jabatan: jabatan,
+        email: user.email
       }, { merge: true });
+      
       alert("✅ Profil berhasil diperbarui!");
-      updateGlobalStats();
-    } catch (e) { alert("Error: " + e.message); }
-    finally { btn.innerText = "Simpan Perubahan"; btn.disabled = false; }
+      location.reload(); // Refresh untuk update hak akses terbaru
+    } catch (e) { 
+      alert("Gagal simpan: " + e.message); 
+      btn.disabled = false;
+      btn.innerText = "Simpan Perubahan";
+    }
   }
 
-  // --- 4. LOGIKA BAYAR IURAN ---
+  // --- 4. INPUT IURAN (KHUSUS ADMIN) ---
   window.bayarIuran = async function() {
     const user = auth.currentUser;
-    if(!confirm("Bayar iuran bulanan Rp 50.000?")) return;
+    
+    // Verifikasi ulang jabatan sebelum proses (Keamanan Lapis Dua)
+    const checkSnap = await getDoc(doc(db, "users", user.uid));
+    const role = checkSnap.data()?.jabatan;
 
-    const btn = document.getElementById("btnPay");
-    btn.innerText = "⏳ Proses...";
-    btn.disabled = true;
+    if (role !== "Ketua RT" && role !== "Sekretaris RT") {
+      alert("Akses Ditolak! Anda bukan Admin.");
+      return;
+    }
+
+    if(!confirm("Konfirmasi input saldo kas masuk sebesar Rp 50.000?")) return;
 
     try {
-      // Update Saldo Global
-      await setDoc(doc(db, "finance", "kas"), { total: increment(50000) }, { merge: true });
-      // Update Status User
-      await setDoc(doc(db, "users", user.uid), { sudahBayar: true, tglBayar: new Date().toISOString() }, { merge: true });
+      // 1. Tambah Saldo Global
+      await setDoc(doc(db, "finance", "kas"), { 
+        total: increment(50000),
+        lastUpdate: new Date().toISOString()
+      }, { merge: true });
+
+      // 2. Tandai User Tersebut Sudah Bayar
+      await setDoc(doc(db, "users", user.uid), { 
+        sudahBayar: true,
+        tglBayar: new Date().toISOString()
+      }, { merge: true });
       
-      alert("✅ Pembayaran Berhasil! Terima kasih.");
+      alert("✅ Saldo Kas RT Berhasil Diperbarui!");
       location.reload();
-    } catch (e) { alert("Gagal: " + e.message); btn.disabled = false; }
+    } catch (e) { alert("Gagal proses: " + e.message); }
   }
 
-  // --- INITIALIZE DASHBOARD ---
+  // --- INITIALIZE SESSION ---
   onAuthStateChanged(auth, (user) => {
     if (user) {
       document.getElementById("userEmail").innerText = user.email;
@@ -227,7 +267,11 @@
     }
   });
 
-  window.logout = () => signOut(auth).then(() => window.location.href = "login.html");
+  window.logout = () => {
+    if(confirm("Keluar dari dashboard?")) {
+      signOut(auth).then(() => window.location.href = "login.html");
+    }
+  };
 </script>
 </body>
 </html>
