@@ -1,143 +1,235 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Login Warga RT 002</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Warga RT 002</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary-color: #2c5364;
+            --accent-color: #22c55e;
+            --glass-bg: rgba(255, 255, 255, 0.9);
+        }
 
-<style>
-body {
-  margin: 0;
-  font-family: 'Segoe UI', sans-serif;
-  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-}
+        body {
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: #333;
+        }
 
-.login-card {
-  background: white;
-  padding: 40px;
-  border-radius: 15px;
-  width: 350px;
-  box-shadow: 0 15px 40px rgba(0,0,0,0.3);
-  text-align: center;
-  animation: fadeIn 0.8s ease-in-out;
-}
+        .container {
+            position: relative;
+            width: 400px;
+            max-width: 90%;
+            perspective: 1000px;
+        }
 
-.login-card h2 {
-  margin-bottom: 10px;
-  color: #2c5364;
-}
+        .card-wrapper {
+            position: relative;
+            width: 100%;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
 
-.login-card p {
-  font-size: 14px;
-  color: #777;
-  margin-bottom: 25px;
-}
+        /* Logic untuk memutar kartu */
+        .container.show-register .card-wrapper {
+            transform: rotateY(180deg);
+        }
 
-input {
-  width: 100%;
-  padding: 12px;
-  margin-bottom: 15px;
-  border-radius: 8px;
-  border: 1px solid #ddd;
-  outline: none;
-  transition: 0.3s;
-}
+        .login-card, .register-card {
+            background: var(--glass-bg);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+            backface-visibility: hidden;
+            width: 100%;
+            box-sizing: border-box;
+        }
 
-input:focus {
-  border-color: #2c5364;
-  box-shadow: 0 0 5px rgba(44,83,100,0.4);
-}
+        .register-card {
+            position: absolute;
+            top: 0;
+            transform: rotateY(180deg);
+        }
 
-button {
-  width: 100%;
-  padding: 12px;
-  border: none;
-  border-radius: 8px;
-  background: #2c5364;
-  color: white;
-  font-size: 15px;
-  cursor: pointer;
-  transition: 0.3s;
-}
+        h2 {
+            margin: 0 0 10px;
+            color: var(--primary-color);
+            font-weight: 700;
+        }
 
-button:hover {
-  background: #1b3b4b;
-}
+        .address-text {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 25px;
+            line-height: 1.4;
+        }
 
-.register-btn {
-  background: #777;
-  margin-top: 10px;
-}
+        .input-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
 
-.register-btn:hover {
-  background: #555;
-}
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            border-radius: 10px;
+            border: 1px solid #ddd;
+            outline: none;
+            box-sizing: border-box;
+            transition: 0.3s;
+            background: #f9f9f9;
+        }
 
-@keyframes fadeIn {
-  from {opacity: 0; transform: translateY(20px);}
-  to {opacity: 1; transform: translateY(0);}
-}
-</style>
+        input:focus {
+            border-color: var(--primary-color);
+            background: #fff;
+            box-shadow: 0 0 8px rgba(44,83,100,0.2);
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 10px;
+        }
+
+        .btn-primary { background: var(--primary-color); color: white; }
+        .btn-primary:hover { background: #1b3b4b; transform: translateY(-2px); }
+
+        .btn-outline { 
+            background: transparent; 
+            border: 2px solid var(--primary-color); 
+            color: var(--primary-color); 
+        }
+        
+        .btn-back {
+            background: var(--accent-color);
+            color: white;
+        }
+
+        .toggle-link {
+            margin-top: 20px;
+            font-size: 14px;
+        }
+
+        .toggle-link span {
+            color: var(--primary-color);
+            cursor: pointer;
+            font-weight: bold;
+            text-decoration: underline;
+        }
+    </style>
 </head>
-
 <body>
 
-<div class="login-card">
-  <h2>Login Warga</h2>
-  <p>RT 002 RW 002 Dusun Cijeruk Kec. Dayuehluhur Kab. Cilacap Prov. Jawa Tengah 53266</p>
+<div class="container" id="mainContainer">
+    <div class="card-wrapper">
+        
+        <div class="login-card">
+            <h2>Masuk Warga</h2>
+            <p class="address-text">RT 002 RW 002 Dusun Cijeruk, Dayeuhluhur</p>
 
-  <input type="email" id="email" placeholder="Masukkan Email">
-  <input type="password" id="password" placeholder="Masukkan Password">
+            <div class="input-group">
+                <input type="email" id="loginEmail" placeholder="Email Anda">
+            </div>
+            <div class="input-group">
+                <input type="password" id="loginPassword" placeholder="Kata Sandi">
+            </div>
 
-  <button onclick="login()">Login</button>
-  <button class="register-btn" onclick="register()">Daftar Akun</button>
+            <button class="btn-primary" onclick="login()">Login</button>
+            <button class="btn-back" onclick="window.location.href='index.html'">
+                <i class="fas fa-arrow-left"></i> Kembali ke Website
+            </button>
 
-<button onclick="window.location.href='index.html'" 
-        style="margin-top:15px; background:#22c55e; color:white; border:none; padding:10px; border-radius:8px; width:100%;">
-  ⬅ Kembali ke Website
-</button>
+            <div class="toggle-link">
+                Belum punya akun? <span onclick="toggleForm()">Daftar di sini</span>
+            </div>
+        </div>
+
+        <div class="register-card">
+            <h2>Daftar Akun</h2>
+            <p class="address-text">Silakan lengkapi data untuk bergabung</p>
+
+            <div class="input-group">
+                <input type="text" id="regName" placeholder="Nama Lengkap">
+            </div>
+            <div class="input-group">
+                <input type="email" id="regEmail" placeholder="Email Baru">
+            </div>
+            <div class="input-group">
+                <input type="password" id="regPassword" placeholder="Buat Kata Sandi">
+            </div>
+
+            <button class="btn-primary" onclick="register()">Buat Akun Sekarang</button>
+            
+            <div class="toggle-link">
+                Sudah punya akun? <span onclick="toggleForm()">Login Kembali</span>
+            </div>
+        </div>
+
+    </div>
 </div>
 
 <script type="module">
-import { initializeApp } from 
-"https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } 
-from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-const firebaseConfig = {
-    apiKey: "AIzaSyA0ZRsLrvZHL0I9biBI5-Ana7vVToaW5Qo",
-    authDomain: "data-rt-002-cijeruk.firebaseapp.com",
-    projectId: "data-rt-002-cijeruk",
-    storageBucket: "data-rt-002-cijeruk.firebasestorage.app",
-    messagingSenderId: "942496035909",
-    appId: "1:942496035909:web:7dfbb4adba70459859df2c",
-    measurementId: "G-478RKMML3F"
-  };
+    const firebaseConfig = {
+        apiKey: "AIzaSyA0ZRsLrvZHL0I9biBI5-Ana7vVToaW5Qo",
+        authDomain: "data-rt-002-cijeruk.firebaseapp.com",
+        projectId: "data-rt-002-cijeruk",
+        storageBucket: "data-rt-002-cijeruk.firebasestorage.app",
+        messagingSenderId: "942496035909",
+        appId: "1:942496035909:web:7dfbb4adba70459859df2c",
+        measurementId: "G-478RKMML3F"
+    };
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
 
-window.register = function() {
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
+    // Fungsi Animasi Perpindahan Form
+    window.toggleForm = function() {
+        document.getElementById('mainContainer').classList.toggle('show-register');
+    }
 
-  createUserWithEmailAndPassword(auth, email, password)
-    .then(() => alert("Akun berhasil dibuat!"))
-    .catch(error => alert(error.message));
-}
+    // Fungsi Register
+    window.register = function() {
+        const email = document.getElementById("regEmail").value;
+        const password = document.getElementById("regPassword").value;
+        const name = document.getElementById("regName").value;
 
-window.login = function() {
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
+        if(!name) return alert("Nama tidak boleh kosong!");
 
-  signInWithEmailAndPassword(auth, email, password)
-    .then(() => window.location.href = "dashboard.html")
-    .catch(error => alert(error.message));
-}
+        createUserWithEmailAndPassword(auth, email, password)
+            .then(() => {
+                alert("Selamat " + name + ", akun Anda berhasil dibuat!");
+                toggleForm(); // Ajak balik ke login
+            })
+            .catch(error => alert("Gagal Daftar: " + error.message));
+    }
+
+    // Fungsi Login
+    window.login = function() {
+        const email = document.getElementById("loginEmail").value;
+        const password = document.getElementById("loginPassword").value;
+
+        signInWithEmailAndPassword(auth, email, password)
+            .then(() => window.location.href = "dashboard.html")
+            .catch(error => alert("Login Gagal: " + error.message));
+    }
 </script>
 
 </body>
