@@ -256,17 +256,36 @@
     } catch (e) { alert(e.message); }
   }
 
-  window.resetBulanBaru = async function() {
-    if(!confirm("⚠️ Hapus semua status Lunas & Riwayat Nominal untuk bulan baru? (Saldo Kas tetap aman)")) return;
+ window.resetBulanBaru = async function() {
+    // Pesan peringatan bahwa saldo juga akan ikut nol
+    if(!confirm("⚠️ PERINGATAN: Semua status Lunas akan dihapus dan SALDO KAS akan kembali ke Rp 0. Lanjutkan?")) return;
+    
     try {
+      // 1. Reset Saldo Kas di database menjadi 0
+      await setDoc(doc(db, "finance", "kas"), { total: 0 }, { merge: true });
+
+      // 2. Ambil semua data warga
       const snapshot = await getDocs(collection(db, "users"));
-      const batchPromises = snapshot.docs.map(d => setDoc(doc(db, "users", d.id), { sudahBayar: false, tglBayar: null, lastAmount: 0 }, { merge: true }));
+      
+      // 3. Reset status bayar, tanggal, dan nominal di tiap warga
+      const batchPromises = snapshot.docs.map(d => 
+        setDoc(doc(db, "users", d.id), { 
+          sudahBayar: false, 
+          tglBayar: null, 
+          lastAmount: 0 
+        }, { merge: true })
+      );
+      
       await Promise.all(batchPromises);
-      alert("✅ Status warga berhasil di-reset!");
+      
+      alert("✅ Berhasil! Status warga dan Saldo Kas telah di-reset ke Nol.");
       location.reload();
-    } catch (e) { alert(e.message); }
+    } catch (e) { 
+      alert("Terjadi kesalahan: " + e.message); 
+    }
   }
 
+  // Bagian Auth tetap di bawahnya
   onAuthStateChanged(auth, (user) => {
     if (user) initDashboard(user);
     else window.location.href = "login.html";
