@@ -22,17 +22,14 @@
 
     .container { max-width: 1200px; margin: 30px auto; padding: 0 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 25px; }
 
-    /* Statistik Row */
     .stats-row { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
     .stat-card { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); padding: 25px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.05); }
     .stat-card span { font-size: 0.8rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; }
     .stat-card strong { font-size: 1.6rem; color: white; display: block; margin-top: 8px; }
 
-    /* Card Styling */
     .card { background: var(--bg-card); padding: 25px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.03); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3); }
     .card h3 { margin-bottom: 20px; color: var(--accent); font-size: 1.1rem; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 15px; display: flex; align-items: center; gap: 10px; }
 
-    /* Form & Input */
     .input-group { margin-bottom: 15px; }
     label { display: block; font-size: 0.8rem; color: var(--text-dim); margin-bottom: 5px; }
     input, select { 
@@ -41,7 +38,6 @@
     }
     input:focus { border-color: var(--accent); }
 
-    /* Buttons */
     .btn { width: 100%; border: none; padding: 14px; border-radius: 10px; cursor: pointer; font-weight: 700; font-size: 0.9rem; margin-top: 10px; }
     .save-btn { background: var(--accent); color: #0f172a; }
     .pay-btn { background: var(--success); color: white; }
@@ -49,7 +45,6 @@
     .reset-btn:hover { background: var(--danger); color: white; }
     .logout-btn { background: transparent; border: 1px solid var(--danger); padding: 8px 15px; color: var(--danger); border-radius: 8px; cursor: pointer; font-size: 0.8rem; }
     
-    /* Table */
     .table-container { grid-column: 1 / -1; overflow-x: auto; background: var(--bg-card); padding: 20px; border-radius: 20px; }
     table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
     th { text-align: left; padding: 12px; color: var(--text-dim); border-bottom: 2px solid #334155; }
@@ -77,7 +72,7 @@
       <strong id="totalWarga">0 KK</strong>
     </div>
     <div class="stat-card">
-      <span>📅 Status Anda</span>
+      <span>📅 Status Iuran Anda</span>
       <strong id="statusPribadi" style="color: var(--danger);">Belum Lunas</strong>
     </div>
   </div>
@@ -85,13 +80,17 @@
   <div class="card" id="panelAdmin" style="display: none;">
     <h3>⚙️ Panel Pengurus RT</h3>
     <div class="input-group">
-      <label>Catat Iuran Untuk Warga:</label>
+      <label>Pilih Nama Warga:</label>
       <select id="selectWarga">
         <option value="">-- Pilih Nama Warga --</option>
       </select>
     </div>
-    <button class="btn pay-btn" onclick="prosesBayar()">✅ Tandai Sudah Bayar (Rp 50rb)</button>
-    <button class="btn reset-btn" onclick="resetBulanBaru()">🔄 Reset Iuran (Bulan Baru)</button>
+    <div class="input-group">
+      <label>Nominal Pembayaran (Rp)</label>
+      <input type="number" id="nominalInput" placeholder="Contoh: 50000" min="0">
+    </div>
+    <button class="btn pay-btn" onclick="prosesBayar()">✅ Catat Pembayaran</button>
+    <button class="btn reset-btn" onclick="resetBulanBaru()">🔄 Reset Status Iuran (Bulan Baru)</button>
     <p style="font-size: 0.7rem; color: var(--text-dim); margin-top: 10px;">*Hanya Pengurus (Ketua/Sekre/Bendahara) yang bisa melihat panel ini.</p>
   </div>
 
@@ -124,12 +123,13 @@
         <tr>
           <th>Nama</th>
           <th>Jabatan</th>
+          <th>Nominal Terakhir</th>
           <th>Tanggal Bayar</th>
           <th>Status</th>
         </tr>
       </thead>
       <tbody id="tabelBody">
-        <tr><td colspan="4" style="text-align: center;">Memuat data...</td></tr>
+        <tr><td colspan="5" style="text-align: center;">Memuat data...</td></tr>
       </tbody>
     </table>
   </div>
@@ -156,25 +156,21 @@
   const auth = getAuth(app);
   const db = getFirestore(app);
 
-  // --- 1. FUNGSI UTAMA: LOAD DATA ---
   async function initDashboard(user) {
     const userRef = doc(db, "users", user.uid);
     const userSnap = await getDoc(userRef);
     
     if (userSnap.exists()) {
       const data = userSnap.data();
-      // Auto-fill form
       document.getElementById("nama").value = data.nama || "";
       document.getElementById("nohp").value = data.nohp || "";
       document.getElementById("jabatan").value = data.jabatan || "Warga";
       
-      // Cek Status Iuran Sendiri
       if (data.sudahBayar) {
         document.getElementById("statusPribadi").innerText = "LUNAS";
         document.getElementById("statusPribadi").style.color = "var(--success)";
       }
 
-      // Tampilkan Panel Admin jika role sesuai
       const adminRoles = ["Ketua RT", "Sekretaris RT", "Bendahara"];
       if (adminRoles.includes(data.jabatan)) {
         document.getElementById("panelAdmin").style.display = "block";
@@ -185,7 +181,6 @@
     loadTable();
   }
 
-  // --- 2. LOAD STATISTIK & TABEL ---
   async function loadStats() {
     const snapshot = await getDocs(collection(db, "users"));
     document.getElementById("totalWarga").innerText = snapshot.size + " KK";
@@ -203,11 +198,12 @@
       const d = doc.data();
       if(d.nama) {
         const tgl = d.tglBayar ? new Date(d.tglBayar).toLocaleDateString('id-ID') : "-";
+        const nominal = d.lastAmount ? "Rp " + d.lastAmount.toLocaleString('id-ID') : "-";
         const status = d.sudahBayar ? `<span class="badge" style="background:var(--success)">LUNAS</span>` : `<span class="badge" style="background:var(--danger)">BELUM</span>`;
-        html += `<tr><td>${d.nama}</td><td>${d.jabatan}</td><td>${tgl}</td><td>${status}</td></tr>`;
+        html += `<tr><td>${d.nama}</td><td>${d.jabatan}</td><td>${nominal}</td><td>${tgl}</td><td>${status}</td></tr>`;
       }
     });
-    tbody.innerHTML = html || "<tr><td colspan='4' align='center'>Belum ada warga terdaftar</td></tr>";
+    tbody.innerHTML = html || "<tr><td colspan='5' align='center'>Belum ada warga terdaftar</td></tr>";
   }
 
   async function loadDropdownWarga() {
@@ -221,7 +217,6 @@
     select.innerHTML = options;
   }
 
-  // --- 3. AKSI: SIMPAN, BAYAR, RESET ---
   window.simpanProfil = async function() {
     const user = auth.currentUser;
     const nama = document.getElementById("nama").value;
@@ -239,30 +234,39 @@
 
   window.prosesBayar = async function() {
     const targetUid = document.getElementById("selectWarga").value;
-    if(!targetUid) return alert("Pilih warga dulu!");
+    const nominal = parseInt(document.getElementById("nominalInput").value);
 
-    if(!confirm("Catat pembayaran Rp 50.000?")) return;
+    if(!targetUid) return alert("Pilih warga dulu!");
+    if(!nominal || nominal <= 0) return alert("Masukkan nominal iuran yang valid!");
+
+    if(!confirm(`Catat pembayaran sebesar Rp ${nominal.toLocaleString('id-ID')}?`)) return;
 
     try {
-      await setDoc(doc(db, "finance", "kas"), { total: increment(50000) }, { merge: true });
-      await setDoc(doc(db, "users", targetUid), { sudahBayar: true, tglBayar: new Date().toISOString() }, { merge: true });
+      // Tambah saldo ke Kas
+      await setDoc(doc(db, "finance", "kas"), { total: increment(nominal) }, { merge: true });
+      // Update status warga dan simpan nominal yang dibayar
+      await setDoc(doc(db, "users", targetUid), { 
+        sudahBayar: true, 
+        tglBayar: new Date().toISOString(),
+        lastAmount: nominal 
+      }, { merge: true });
+      
       alert("✅ Pembayaran berhasil dicatat!");
       location.reload();
     } catch (e) { alert(e.message); }
   }
 
   window.resetBulanBaru = async function() {
-    if(!confirm("⚠️ Hapus semua status Lunas untuk bulan baru? (Saldo tidak hilang)")) return;
+    if(!confirm("⚠️ Hapus semua status Lunas & Riwayat Nominal untuk bulan baru? (Saldo Kas tetap aman)")) return;
     try {
       const snapshot = await getDocs(collection(db, "users"));
-      const batchPromises = snapshot.docs.map(d => setDoc(doc(db, "users", d.id), { sudahBayar: false, tglBayar: null }, { merge: true }));
+      const batchPromises = snapshot.docs.map(d => setDoc(doc(db, "users", d.id), { sudahBayar: false, tglBayar: null, lastAmount: 0 }, { merge: true }));
       await Promise.all(batchPromises);
       alert("✅ Status warga berhasil di-reset!");
       location.reload();
     } catch (e) { alert(e.message); }
   }
 
-  // --- AUTH ---
   onAuthStateChanged(auth, (user) => {
     if (user) initDashboard(user);
     else window.location.href = "login.html";
