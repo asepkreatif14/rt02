@@ -141,7 +141,6 @@
   import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
   import { getFirestore, setDoc, doc, getDoc, collection, getDocs, increment } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-  // --- CONFIGURASI FIREBASE ---
   const firebaseConfig = {
     apiKey: "AIzaSyA0ZRsLrvZHL0I9biBI5-Ana7vVToaW5Qo",
     authDomain: "data-rt-002-cijeruk.firebaseapp.com",
@@ -159,11 +158,9 @@
   // --- 1. UPDATE STATISTIK GLOBAL ---
   async function updateGlobalStats() {
     try {
-      // Hitung Total Warga Terdaftar
       const snapshot = await getDocs(collection(db, "users"));
       document.getElementById("totalWarga").innerText = snapshot.size + " Orang";
 
-      // Ambil Saldo Kas Pusat
       const kasSnap = await getDoc(doc(db, "finance", "kas"));
       if (kasSnap.exists()) {
         const saldo = kasSnap.data().total || 0;
@@ -176,35 +173,27 @@
   async function loadUserData(uid) {
     const docRef = doc(db, "users", uid);
     const docSnap = await getDoc(docRef);
-    
     if (docSnap.exists()) {
       const data = docSnap.data();
-      
-      // Auto-fill form
       document.getElementById("nama").value = data.nama || "";
       document.getElementById("nohp").value = data.nohp || "";
       document.getElementById("jabatan").value = data.jabatan || "Warga";
       
       const btnPay = document.getElementById("btnPay");
       const statusText = document.getElementById("statusIuran");
-
-      // --- LOGIKA PROTEKSI ADMIN ---
       const isAdmin = (data.jabatan === "Ketua RT" || data.jabatan === "Sekretaris RT");
 
       if (isAdmin) {
-        // Jika Admin: Tombol Aktif
         btnPay.disabled = false;
         btnPay.innerHTML = "💳 Input Kas Iuran (Admin)";
         btnPay.style.background = "var(--success)";
       } else {
-        // Jika Warga: Tombol Terkunci
         btnPay.disabled = true;
         btnPay.innerHTML = "🔒 Terkunci (Hanya Admin)";
-        btnPay.style.background = "#475569"; // Warna abu-abu kusam
+        btnPay.style.background = "#475569";
         btnPay.style.cursor = "not-allowed";
       }
 
-      // Cek Status Iuran Personal
       if(data.sudahBayar) {
         statusText.innerText = "Sudah Terbayar";
         statusText.style.color = "var(--success)";
@@ -212,7 +201,33 @@
     }
   }
 
-  // --- 3. SIMPAN PROFIL ---
+  // --- 3. LOAD HISTORI PEMBAYARAN ---
+  async function loadHistori() {
+    const tbody = document.getElementById("tabelHistori");
+    try {
+      const querySnapshot = await getDocs(collection(db, "users"));
+      let html = "";
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        if (data.nama) {
+          const tgl = data.tglBayar ? new Date(data.tglBayar).toLocaleDateString('id-ID') : "-";
+          const status = data.sudahBayar 
+            ? `<span style="color: var(--success); font-weight: bold;">✅ Lunas</span>` 
+            : `<span style="color: var(--danger);">❌ Belum Bayar</span>`;
+          html += `
+            <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+              <td style="padding: 12px;">${data.nama}</td>
+              <td style="padding: 12px; color: var(--text-dim);">${data.jabatan || "Warga"}</td>
+              <td style="padding: 12px;">${tgl}</td>
+              <td style="padding: 12px;">${status}</td>
+            </tr>`;
+        }
+      });
+      tbody.innerHTML = html || '<tr><td colspan="4" style="text-align: center; padding: 20px;">Belum ada data warga.</td></tr>';
+    } catch (e) { tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: var(--danger);">Gagal memuat data.</td></tr>'; }
+  }
+
+  // --- 4. AKSI TOMBOL ---
   window.simpan = async function() {
     const user = auth.currentUser;
     const btn = document.getElementById("btnSimpan");
@@ -221,122 +236,43 @@
     const jabatan = document.getElementById("jabatan").value;
 
     if (!nama || !nohp) { alert("Nama dan WhatsApp wajib diisi!"); return; }
-
     btn.innerText = "⏳ Menyimpan...";
     btn.disabled = true;
 
     try {
-      await setDoc(doc(db, "users", user.uid), {
-        nama: nama,
-        nohp: nohp,
-        jabatan: jabatan,
-        email: user.email
-      }, { merge: true });
-      
+      await setDoc(doc(db, "users", user.uid), { nama, nohp, jabatan, email: user.email }, { merge: true });
       alert("✅ Profil berhasil diperbarui!");
-      location.reload(); // Refresh untuk update hak akses terbaru
-    } catch (e) { 
-      alert("Gagal simpan: " + e.message); 
-      btn.disabled = false;
-      btn.innerText = "Simpan Perubahan";
-    }
+      location.reload();
+    } catch (e) { alert("Gagal simpan: " + e.message); btn.disabled = false; btn.innerText = "Simpan Perubahan"; }
   }
 
-  // --- 4. INPUT IURAN (KHUSUS ADMIN) ---
   window.bayarIuran = async function() {
     const user = auth.currentUser;
-    
-    // Verifikasi ulang jabatan sebelum proses (Keamanan Lapis Dua)
     const checkSnap = await getDoc(doc(db, "users", user.uid));
-    const role = checkSnap.data()?.jabatan;
-
-    if (role !== "Ketua RT" && role !== "Sekretaris RT") {
-      alert("Akses Ditolak! Anda bukan Admin.");
-      return;
+    if (checkSnap.data()?.jabatan !== "Ketua RT" && checkSnap.data()?.jabatan !== "Sekretaris RT") {
+      alert("Akses Ditolak!"); return;
     }
-
-    if(!confirm("Konfirmasi input saldo kas masuk sebesar Rp 50.000?")) return;
-
+    if(!confirm("Konfirmasi input saldo Rp 50.000?")) return;
     try {
-      // 1. Tambah Saldo Global
-      await setDoc(doc(db, "finance", "kas"), { 
-        total: increment(50000),
-        lastUpdate: new Date().toISOString()
-      }, { merge: true });
-
-      // 2. Tandai User Tersebut Sudah Bayar
-      await setDoc(doc(db, "users", user.uid), { 
-        sudahBayar: true,
-        tglBayar: new Date().toISOString()
-      }, { merge: true });
-      
-      alert("✅ Saldo Kas RT Berhasil Diperbarui!");
-      location.reload();
-    } catch (e) { alert("Gagal proses: " + e.message); }
+      await setDoc(doc(db, "finance", "kas"), { total: increment(50000), lastUpdate: new Date().toISOString() }, { merge: true });
+      await setDoc(doc(db, "users", user.uid), { sudahBayar: true, tglBayar: new Date().toISOString() }, { merge: true });
+      alert("✅ Berhasil!"); location.reload();
+    } catch (e) { alert("Gagal: " + e.message); }
   }
 
-  // --- INITIALIZE SESSION ---
+  window.logout = () => { if(confirm("Keluar?")) signOut(auth).then(() => window.location.href = "login.html"); };
+
+  // --- 5. INITIALIZE (Satu Fungsi Utama) ---
   onAuthStateChanged(auth, (user) => {
     if (user) {
       document.getElementById("userEmail").innerText = user.email;
       loadUserData(user.uid);
       updateGlobalStats();
+      loadHistori();
     } else {
       window.location.href = "login.html";
     }
   });
-
-  window.logout = () => {
-    if(confirm("Keluar dari dashboard?")) {
-      signOut(auth).then(() => window.location.href = "login.html");
-    }
-    
-  };
-  // --- 5. LOAD HISTORI PEMBAYARAN (TRANSPARANSI) ---
-async function loadHistori() {
-  const tbody = document.getElementById("tabelHistori");
-  try {
-    const querySnapshot = await getDocs(collection(db, "users"));
-    let html = "";
-    
-    querySnapshot.forEach((doc) => {
-      const data = doc.data();
-      // Hanya tampilkan yang sudah mengisi nama
-      if (data.nama) {
-        const tgl = data.tglBayar ? new Date(data.tglBayar).toLocaleDateString('id-ID') : "-";
-        const status = data.sudahBayar 
-          ? `<span style="color: var(--success); font-weight: bold;">✅ Lunas</span>` 
-          : `<span style="color: var(--danger);">❌ Belum Bayar</span>`;
-        
-        html += `
-          <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
-            <td style="padding: 12px;">${data.nama}</td>
-            <td style="padding: 12px; color: var(--text-dim);">${data.jabatan || "Warga"}</td>
-            <td style="padding: 12px;">${tgl}</td>
-            <td style="padding: 12px;">${status}</td>
-          </tr>
-        `;
-      }
-    });
-    
-    tbody.innerHTML = html || '<tr><td colspan="4" style="text-align: center; padding: 20px;">Belum ada data warga.</td></tr>';
-  } catch (e) {
-    console.error("Gagal histori:", e);
-    tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: var(--danger);">Gagal memuat data.</td></tr>';
-  }
-}
-
-// Update bagian onAuthStateChanged untuk memanggil fungsi ini
-onAuthStateChanged(auth, (user) => {
-  if (user) {
-    document.getElementById("userEmail").innerText = user.email;
-    loadUserData(user.uid);
-    updateGlobalStats();
-    loadHistori(); // <--- TAMBAHKAN INI
-  } else {
-    window.location.href = "login.html";
-  }
-});
 </script>
   
 </body>
