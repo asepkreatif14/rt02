@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>RT 02 RW 02 Dusun Cijeruk - Digital Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap');
+        
+        :root {
+            --bg-dark: #0f172a;
+            --card-dark: #1e293b;
+            --accent-gold: #fbbf24;
+            --accent-blue: #38bdf8;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-dark);
+            color: #f1f5f9;
+            overflow-x: hidden; /* Mencegah scrolling horizontal */
+        }
+
+        .glass-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .gold-gradient-text {
+            background: linear-gradient(to right, #fbbf24, #f59e0b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .org-line {
+            width: 2px;
+            background: linear-gradient(to bottom, var(--accent-blue), transparent);
+            height: 20px;
+        }
+
+        .nav-link:hover {
+            color: var(--accent-blue);
+            text-shadow: 0 0 8px rgba(56, 189, 248, 0.5);
+        }
+
+        .gallery-item img {
+            transition: transform 0.5s ease;
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.1);
+        }
+
+        /* Penyesuaian khusus untuk HP Sangat Kecil */
+        @media (max-width: 380px) {
+            .text-7xl { font-size: 2.5rem; }
+            .text-4xl { font-size: 1.8rem; }
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+
+    <!-- Navigation Bar -->
+    <nav class="sticky top-0 z-50 glass-card px-4 md:px-6 py-3">
+        <div class="max-w-6xl mx-auto flex justify-between items-center">
+            <!-- Logo Area -->
+            <div class="flex items-center gap-2 md:gap-3">
+                <div class="relative group cursor-pointer">
+                    <div class="absolute -inset-1 bg-gradient-to-r from-blue-600 to-amber-500 rounded-lg blur opacity-25 group-hover:opacity-75 transition duration-1000 group-hover:duration-200"></div>
+                    <div class="relative w-10 h-10 md:w-12 md:h-12 bg-slate-900 rounded-lg flex items-center justify-center border border-white/10">
+                        <svg viewBox="0 0 100 100" class="w-7 h-7 md:w-8 md:h-8 fill-current text-blue-400">
+                            <path d="M50 15L15 45V85H35V60H65V85H85V45L50 15Z" fill="none" stroke="currentColor" stroke-width="5"/>
+                            <circle cx="50" cy="40" r="8" fill="#fbbf24"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="flex flex-col">
+                    <span class="font-extrabold text-sm md:text-lg tracking-tight uppercase leading-none">RT 02 <span class="text-blue-400">RW 02</span></span>
+                    <span class="text-[8px] md:text-[10px] text-gray-400 font-bold tracking-[0.2em] uppercase">Dusun Cijeruk</span>
+                </div>
+            </div>
+
+            <!-- Links -->
+            <div class="flex gap-3 md:gap-6 text-[9px] md:text-sm font-bold text-gray-400 uppercase tracking-widest">
+                <a href="#" class="nav-link transition">Home</a>
+                <a href="#struktur" class="nav-link transition hidden sm:inline">Struktur</a>
+                <a href="#keamanan" class="nav-link transition">Ronda</a>
+                <a href="#galeri" class="nav-link transition">Galeri</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-6xl mx-auto px-4 pb-20 space-y-16 md:space-y-24">
+        
+        <!-- Hero Section -->
+        <section class="text-center space-y-6 pt-10 md:pt-16">
+            <div class="inline-block px-4 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[9px] md:text-[11px] font-bold tracking-widest uppercase">
+                Portal Resmi Lingkungan
+            </div>
+            <h1 class="text-4xl md:text-7xl font-extrabold tracking-tight leading-[1.1]">
+                Dusun <span class="gold-gradient-text">Cijeruk</span><br>
+                RT 02 RW 02
+            </h1>
+            <p class="text-gray-400 max-w-2xl mx-auto text-sm md:text-lg font-light px-4">
+                Membangun kerukunan dan keamanan lingkungan yang modern, transparan, dan terintegrasi secara digital.
+            </p>
+        </section>
+
+        <!-- Visi & Misi Section -->
+        <section id="visimisi" class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 scroll-mt-24">
+            <div class="glass-card p-6 md:p-8 rounded-3xl border-t-4 border-t-amber-500">
+                <h3 class="text-amber-500 font-bold uppercase tracking-widest text-[10px] mb-4">Visi Kami</h3>
+                <p class="text-lg md:text-2xl font-semibold leading-relaxed">
+                    "Menjadi lingkungan yang mandiri, agamis, dan terdepan dalam keamanan serta gotong royong."
+                </p>
+            </div>
+            <div class="glass-card p-6 md:p-8 rounded-3xl border-t-4 border-t-blue-500">
+                <h3 class="text-blue-400 font-bold uppercase tracking-widest text-[10px] mb-4">Misi Lingkungan</h3>
+                <ul class="space-y-3 md:space-y-4 text-gray-300 font-medium text-sm md:text-base">
+                    <li class="flex gap-3"><span class="text-blue-500 font-bold">01.</span> Penguatan sistem keamanan berbasis kesadaran warga.</li>
+                    <li class="flex gap-3"><span class="text-blue-500 font-bold">02.</span> Menumbuhkan semangat gotong royong pembangunan.</li>
+                    <li class="flex gap-3"><span class="text-blue-500 font-bold">03.</span> Fasilitasi kegiatan pemuda dan keagamaan rutin.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Struktur Organisasi Section -->
+        <section id="struktur" class="space-y-10 scroll-mt-24 overflow-x-auto">
+            <div class="text-center space-y-2">
+                <h2 class="text-2xl md:text-3xl font-bold">Struktur Pengurus</h2>
+                <p class="text-gray-500 text-xs italic uppercase tracking-widest">Masa Bakti Periode Berjalan</p>
+            </div>
+
+            <div class="flex flex-col items-center min-w-[320px]">
+                <!-- Ketua -->
+                <div class="relative group">
+                    <div class="absolute -inset-0.5 bg-gradient-to-r from-blue-500 to-amber-500 rounded-xl blur opacity-20 group-hover:opacity-40 transition"></div>
+                    <div class="relative w-48 md:w-64 glass-card p-4 md:p-6 rounded-xl text-center">
+                        <span class="text-[9px] font-bold text-amber-400 tracking-widest uppercase mb-1 block">Ketua RT</span>
+                        <p class="text-lg md:text-2xl font-bold text-white tracking-wide uppercase">ISMAIL</p>
+                    </div>
+                </div>
+
+                <div class="org-line"></div>
+
+                <!-- Row 2: Sekertaris & Bendahara -->
+                <div class="flex justify-center gap-4 md:gap-24 w-full">
+                    <div class="w-36 md:w-56 glass-card p-3 md:p-5 rounded-xl text-center border-t-2 border-t-blue-500">
+                        <span class="text-[8px] md:text-[10px] font-bold text-blue-400 uppercase mb-1 block">Sekretaris</span>
+                        <p class="text-sm md:text-lg font-bold text-gray-100 uppercase">CARSOYO</p>
+                    </div>
+                    <div class="w-36 md:w-56 glass-card p-3 md:p-5 rounded-xl text-center border-t-2 border-t-blue-500">
+                        <span class="text-[8px] md:text-[10px] font-bold text-blue-400 uppercase mb-1 block">Bendahara</span>
+                        <p class="text-sm md:text-lg font-bold text-gray-100 uppercase">DARWA</p>
+                    </div>
+                </div>
+
+                <!-- Row 3: Seksi-Seksi (Grid menyesuaikan layar) -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 mt-8 md:mt-12 w-full">
+                    <div class="glass-card p-4 md:p-5 rounded-2xl border-l-4 border-l-emerald-500 hover:bg-white/5 transition">
+                        <h4 class="text-[9px] font-bold text-emerald-400 uppercase mb-3 tracking-widest">Seksi Pembangunan</h4>
+                        <ul class="text-xs md:text-sm font-semibold space-y-1 text-gray-300">
+                            <li>• CARTA</li>
+                            <li>• TARJO</li>
+                        </ul>
+                    </div>
+                    <div class="glass-card p-4 md:p-5 rounded-2xl border-l-4 border-l-purple-500 hover:bg-white/5 transition">
+                        <h4 class="text-[9px] font-bold text-purple-400 uppercase mb-3 tracking-widest">Seksi Kerohanian</h4>
+                        <ul class="text-xs md:text-sm font-semibold space-y-1 text-gray-300">
+                            <li>• ANTON KARTONO</li>
+                            <li>• CASTIM CASTIANA</li>
+                        </ul>
+                    </div>
+                    <div class="glass-card p-4 md:p-5 rounded-2xl border-l-4 border-l-red-500 hover:bg-white/5 transition">
+                        <h4 class="text-[9px] font-bold text-red-400 uppercase mb-3 tracking-widest">Seksi Keamanan</h4>
+                        <ul class="text-xs md:text-sm font-semibold space-y-1 text-gray-300">
+                            <li>• MISTAB</li>
+                            <li>• SUMINO</li>
+                        </ul>
+                    </div>
+                    <div class="glass-card p-4 md:p-5 rounded-2xl border-l-4 border-l-blue-500 hover:bg-white/5 transition">
+                        <h4 class="text-[9px] font-bold text-blue-400 uppercase mb-3 tracking-widest">Pemuda & Olahraga</h4>
+                        <ul class="text-xs md:text-sm font-semibold space-y-1 text-gray-300">
+                            <li>• SARKIM</li>
+                            <li>• RANDI T.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Jadwal Ronda -->
+        <section id="keamanan" class="space-y-8 scroll-mt-24">
+            <div class="flex items-center gap-4">
+                <h2 class="text-xl md:text-2xl font-bold">Jadwal Ronda Malam</h2>
+                <div class="h-[1px] flex-1 bg-gray-800/50"></div>
+            </div>
+            
+            <!-- Grid Responsif: 2 kolom di HP, 4 di Tablet, 7 di Laptop -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2 md:gap-3">
+                <div class="glass-card p-3 md:p-4 rounded-xl hover:border-blue-500/50 transition">
+                    <span class="text-[9px] font-black text-blue-400 block mb-2 uppercase">Senin</span>
+                    <ul class="text-[9px] md:text-[10px] text-gray-400 space-y-1 font-medium">
+                        <li>1. Karso</li><li>2. Refi</li><li>3. Rendi</li><li>4. Kartono</li><li>5. Darwa</li>
+                    </ul>
+                </div>
+                <div class="glass-card p-3 md:p-4 rounded-xl">
+                    <span class="text-[9px] font-black text-blue-400 block mb-2 uppercase">Selasa</span>
+                    <ul class="text-[9px] md:text-[10px] text-gray-400 space-y-1 font-medium">
+                        <li>1. Tarso</li><li>2. Atono</li><li>3. Rehan</li><li>4. Sandi</li><li>5. Sarkim</li>
+                    </ul>
+                </div>
+                <div class="glass-card p-3 md:p-4 rounded-xl">
+                    <span class="text-[9px] font-black text-blue-400 block mb-2 uppercase">Rabu</span>
+                    <ul class="text-[9px] md:text-[10px] text-gray-400 space-y-1 font-medium">
+                        <li>1. Tarkono</li><li>2. Darya</li><li>3. Saman</li><li>4. Sumino</li><li>5. Darno</li>
+                    </ul>
+                </div>
+                <div class="glass-card p-3 md:p-4 rounded-xl">
+                    <span class="text-[9px] font-black text-blue-400 block mb-2 uppercase">Kamis</span>
+                    <ul class="text-[9px] md:text-[10px] text-gray-400 space-y-1 font-medium">
+                        <li>1. Castim</li><li>2. Randi</li><li>3. Tarno</li><li>4. Ismail</li>
+                    </ul>
+                </div>
+                <div class="glass-card p-3 md:p-4 rounded-xl">
+                    <span class="text-[9px] font-black text-blue-400 block mb-2 uppercase">Jum'at</span>
+                    <ul class="text-[9px] md:text-[10px] text-gray-400 space-y-1 font-medium">
+                        <li>1. Carsoyo</li><li>2. Rasda</li><li>3. Carta</li><li>4. Emon</li>
+                    </ul>
+                </div>
+                <div class="glass-card p-3 md:p-4 rounded-xl">
+                    <span class="text-[9px] font-black text-blue-400 block mb-2 uppercase">Sabtu</span>
+                    <ul class="text-[9px] md:text-[10px] text-gray-400 space-y-1 font-medium">
+                        <li>1. Mistab</li><li>2. Carwa</li><li>3. Kasim</li><li>4. Anang</li>
+                    </ul>
+                </div>
+                <div class="glass-card p-3 md:p-4 rounded-xl border-amber-500/30 bg-amber-500/5">
+                    <span class="text-[9px] font-black text-amber-400 block mb-2 uppercase">Minggu</span>
+                    <ul class="text-[9px] md:text-[10px] text-gray-400 space-y-1 font-medium">
+                        <li>1. Kartoyo</li><li>2. Ade</li><li>3. Tarsono</li><li>4. Wandi</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Galeri Kegiatan -->
+        <section id="galeri" class="space-y-8 scroll-mt-24">
+            <div class="flex items-center gap-4">
+                <h2 class="text-xl md:text-2xl font-bold">Galeri Kegiatan</h2>
+                <div class="h-[1px] flex-1 bg-gray-800/50"></div>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
+                <div class="gallery-item relative aspect-square rounded-xl md:rounded-2xl overflow-hidden glass-card group cursor-pointer">
+                    <img src="https://images.unsplash.com/photo-1577415124269-fc1140a69e91?auto=format&fit=crop&q=80&w=800" alt="Gotong Royong" class="w-full h-full object-cover opacity-50 group-hover:opacity-100">
+                    <div class="absolute bottom-0 left-0 p-3 md:p-4 bg-gradient-to-t from-black to-transparent w-full">
+                        <p class="text-[8px] md:text-[10px] font-bold text-white uppercase tracking-widest">Gotong Royong Lingkungan</p>
+                    </div>
+                </div>
+                <div class="gallery-item relative aspect-square rounded-xl md:rounded-2xl overflow-hidden glass-card group cursor-pointer">
+                    <img src="https://images.unsplash.com/photo-1541533330026-2d71d5b3bb0c?auto=format&fit=crop&q=80&w=800" alt="Pertemuan Warga" class="w-full h-full object-cover opacity-50 group-hover:opacity-100">
+                    <div class="absolute bottom-0 left-0 p-3 md:p-4 bg-gradient-to-t from-black to-transparent w-full">
+                        <p class="text-[8px] md:text-[10px] font-bold text-white uppercase tracking-widest">Musyawarah Rutin</p>
+                    </div>
+                </div>
+                <div class="gallery-item relative aspect-square rounded-xl md:rounded-2xl overflow-hidden glass-card group cursor-pointer">
+                    <img src="https://images.unsplash.com/photo-1491438590914-bc09fcaaf77a?auto=format&fit=crop&q=80&w=800" alt="Kegiatan Pemuda" class="w-full h-full object-cover opacity-50 group-hover:opacity-100">
+                    <div class="absolute bottom-0 left-0 p-3 md:p-4 bg-gradient-to-t from-black to-transparent w-full">
+                        <p class="text-[8px] md:text-[10px] font-bold text-white uppercase tracking-widest">Kegiatan Kepemudaan</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Signal Kentongan -->
+        <section class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+            <div class="glass-card p-4 flex flex-col justify-center items-center gap-1 rounded-xl border-b-2 border-b-red-500">
+                <span class="text-red-500 font-bold text-xl leading-none">●</span>
+                <span class="text-[8px] font-bold tracking-widest uppercase text-gray-400">Rajapati</span>
+            </div>
+            <div class="glass-card p-4 flex flex-col justify-center items-center gap-1 rounded-xl border-b-2 border-b-red-500">
+                <span class="text-red-500 font-bold text-xl leading-none">●●</span>
+                <span class="text-[8px] font-bold tracking-widest uppercase text-gray-400">Pencurian</span>
+            </div>
+            <div class="glass-card p-4 flex flex-col justify-center items-center gap-1 rounded-xl border-b-2 border-b-red-500">
+                <span class="text-red-500 font-bold text-xl leading-none">●●●</span>
+                <span class="text-[8px] font-bold tracking-widest uppercase text-gray-400">Kebakaran</span>
+            </div>
+            <div class="glass-card p-4 flex flex-col justify-center items-center gap-1 rounded-xl border-b-2 border-b-emerald-500">
+                <span class="text-emerald-400 font-bold text-xl leading-none">●...●</span>
+                <span class="text-[8px] font-bold tracking-widest uppercase text-emerald-400">Aman</span>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="border-t border-gray-800/50 py-12 text-center glass-card mt-10">
+        <div class="max-w-6xl mx-auto px-6 space-y-4">
+            <p class="text-gray-400 text-xs font-bold tracking-widest uppercase">RT 02 RW 02 Dusun Cijeruk</p>
+            <div class="flex justify-center gap-4 text-[10px] text-gray-500 font-semibold">
+                <span>Desa Dayeuhluhur</span>
+                <span>•</span>
+                <span>Kec. Dayeuhluhur</span>
+            </div>
+            <div class="pt-6 text-[9px] text-gray-700 uppercase tracking-widest">© 2026 Portal Digital Lingkungan.</div>
+        </div>
+    </footer>
+
+</body>
+</html>
